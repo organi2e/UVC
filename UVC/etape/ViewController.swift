@@ -20,16 +20,20 @@ class ViewController: NSViewController {
 			}
 			let uvc: UVC = try UVC(device: device)
 			
-			uvc.autoWhitebalance = false
+			
 			
 			uvc.autoFocus = false
-			uvc.autoExposure = false
-			uvc.exposure = 0.987
 			uvc.focus = 0.53
 			
-			//			uvc.gain = 0.0627451
+			uvc.autoExposure = false
+			uvc.exposure = 0.987
+			
+			uvc.autoWhitebalance = false
+			uvc.whitebalance = 0.99
+			
+			uvc.brightness = 0.3
+			uvc.gain = 0.2
 			uvc.contrast = 0.5
-			uvc.brightness = 0.5
 			uvc.saturation = 0.5
 			uvc.sharpness = 0.2
 			

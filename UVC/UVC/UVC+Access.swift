@@ -18,8 +18,8 @@ internal extension UVC {
 		return Data(count: MemoryLayout<T>.size).withUnsafeBytes { (ref: UnsafePointer<T>) in
 			var request: IOUSBDevRequest = IOUSBDevRequest(bmRequestType: UInt8(kUSBTypeIn),
 			                                               bRequest: target.rawValue,
-			                                               wValue: (selector<<8)|0x02,
-			                                               wIndex: (unit<<8)|0x02,
+			                                               wValue: (selector<<8)|flag,
+			                                               wIndex: (unit<<8)|flag,
 			                                               wLength: UInt16(MemoryLayout<T>.size),
 			                                               pData: UnsafeMutablePointer<T>(mutating: ref),
 			                                               wLenDone: 0)
@@ -62,8 +62,8 @@ internal extension UVC {
 		var ref: T = value
 		var request: IOUSBDevRequest = IOUSBDevRequest(bmRequestType: UInt8(kUSBTypeOut),
 		                                               bRequest: target.rawValue,
-		                                               wValue: (selector<<8)|0x02,
-		                                               wIndex: (unit<<8)|0x02,
+		                                               wValue: (selector<<8)|flag,
+		                                               wIndex: (unit<<8)|flag,
 		                                               wLength: UInt16(MemoryLayout<T>.size),
 		                                               pData: &ref,
 		                                               wLenDone: 0)
