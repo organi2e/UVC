@@ -10,6 +10,7 @@ import AVFoundation
 import UVC
 
 class ViewController: NSViewController {
+	let group: DispatchGroup = DispatchGroup()
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view.
