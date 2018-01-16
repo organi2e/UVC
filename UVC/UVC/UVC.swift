@@ -66,8 +66,9 @@ private extension UnsafeMutablePointer where Pointee == UnsafeMutablePointer<IOU
 private extension UnsafeMutablePointer where Pointee == UnsafeMutablePointer<IOCFPlugInInterface> {
 	func getInterface<T>(uuid: CFUUID) throws -> UnsafeMutablePointer<T> {
 		var ref: LPVOID?
-		guard pointee.pointee.QueryInterface(self, CFUUIDGetUUIDBytes(uuid), &ref) == kIOReturnSuccess, let result: UnsafeMutablePointer<T> = ref?.assumingMemoryBound(to: T.self) else {
-			throw NSError(domain: #function, code: #line, userInfo: nil)
+		guard pointee.pointee.QueryInterface(self, CFUUIDGetUUIDBytes(uuid), &ref) == kIOReturnSuccess,
+			let result: UnsafeMutablePointer<T> = ref?.assumingMemoryBound(to: T.self) else {
+				throw NSError(domain: #function, code: #line, userInfo: nil)
 		}
 		return result
 	}
@@ -83,15 +84,14 @@ private extension io_object_t {
 }
 private extension String {
 	func toVnP() throws -> (NSNumber, NSNumber) {
-		let pattern: String = "^UVC\\s+Camera\\s+VendorID\\_([0-9]+)\\s+ProductID\\_([0-9]+)$"
-		guard let match: NSTextCheckingResult = try NSRegularExpression(pattern: pattern, options: []).firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.characters.count)), 3 == match.numberOfRanges else {
-			throw NSError(domain: #function, code: #line, userInfo: ["pattern": pattern, "query": self])
-		}
-		let nsself: NSString = self as NSString
-		let vendorIDStr: String = nsself.substring(with: match.range(at: 1))
-		let productIDStr: String = nsself.substring(with: match.range(at: 2))
-		guard let vendorID: Int = Int(vendorIDStr), let productID: Int = Int(productIDStr) else {
-			throw NSError(domain: #function, code: #line, userInfo: ["idVendor": vendorIDStr, "idProduct": productIDStr])
+		let regex: NSRegularExpression = try NSRegularExpression(pattern: "^UVC\\s+Camera\\s+VendorID\\_([0-9]+)\\s+ProductID\\_([0-9]+)$", options: [])
+		guard
+			let match: NSTextCheckingResult = regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: count)), 3 == match.numberOfRanges,
+			let vendorIDRange: Range<String.Index> = Range<String.Index>(match.range(at: 1), in: self),
+			let vendorID: Int = Int(self[vendorIDRange]),
+			let productIDRange: Range<String.Index> = Range<String.Index>(match.range(at: 2), in: self),
+			let productID: Int = Int(self[productIDRange]) else {
+				throw NSError(domain: #file, code: #line, userInfo: ["query": self])
 		}
 		return (vendorID as NSNumber, productID as NSNumber)
 	}

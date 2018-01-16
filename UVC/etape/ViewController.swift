@@ -10,33 +10,23 @@ import AVFoundation
 import UVC
 
 class ViewController: NSViewController {
-	let group: DispatchGroup = DispatchGroup()
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view.
 		do {
-			print(AVCaptureDevice.devices(for: .video).map{$0.localizedName})
-			guard let device: AVCaptureDevice = AVCaptureDevice.devices(for: .video).filter({$0.localizedName=="Logitech Camera"}).first else {
-				throw NSError(domain: #function, code: #line, userInfo: nil)
-			}
-			let uvc: UVC = try UVC(device: device)
+			let allDevies: [AVCaptureDevice] = AVCaptureDevice.devices(for: .video)
+			let aDevice: AVCaptureDevice = choose aDevie from allDevices
 			
-			
+			let uvc: UVC = try UVC(device: aDevice)
 			
 			uvc.autoFocus = false
-			uvc.focus = 0.53
+			uvc.focus = 0.5
 			
 			uvc.autoExposure = false
-			uvc.exposure = 0.987
+			uvc.exposure = 0.9
 			
 			uvc.autoWhitebalance = false
-			uvc.whitebalance = 0.99
-			
-			uvc.brightness = 0.3
-			uvc.gain = 0.2
-			uvc.contrast = 0.5
-			uvc.saturation = 0.5
-			uvc.sharpness = 0.2
+			uvc.whitebalance = 0.9
 			
 			print(uvc.brightness)
 			print(uvc.contrast)
@@ -47,15 +37,16 @@ class ViewController: NSViewController {
 			let layer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer(session: .init())
 			layer.videoGravity = .resizeAspectFill
 			layer.bounds = view.bounds
-			try layer.session?.addInput(AVCaptureDeviceInput(device: device))
+			
+			try layer.session?.addInput(AVCaptureDeviceInput(device: aDevice))
 			layer.session?.sessionPreset = .hd1280x720
 			layer.session?.startRunning()
 			
 			view.layer = layer
 			view.wantsLayer = true
+			
 		} catch {
 			print(error)
-			return
 		}
 	}
 }
